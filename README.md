@@ -1,18 +1,21 @@
-## Getting Started
+# PhishGuard 🛡️
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+PhishGuard is a Machine Learning-powered cybersecurity solution designed to detect and classify malicious/phishing URLs in real-time. The system extracts lexical, domain-based, and structural features from URLs to accurately identify potential security threats before users interact with them.
 
-## Folder Structure
+📌 Features
+URL Feature Extraction: Analyzes incoming URLs across key security metrics (entropy, IP presence, HTTPS configuration, domain age/tokens).
 
-The workspace contains two folders by default, where:
+ML Classification: Powered by a trained classification model (phishing_model.pkl) to predict risk scores and safety status.
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+REST API (api.py): Lightweight FastAPI endpoint serving prediction requests.
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+Interactive UI (app.py / index): Simple frontend interface for submitting URLs and viewing instant classification reports.
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+📁 Repository Structure
+├── api.py               # REST API server for URL inference
+├── app.py               # Main application entry point / web runner
+├── features.py          # Feature extraction logic from raw URLs
+├── index                # HTML UI template for interaction
+├── phishing_model.pkl   # Pre-trained ML classification model
+├── train_model.py       # Script to train and evaluate the model
+└── README.md            # Project documentation
