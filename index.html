@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhishGuard | Exploit Simulation & URL Security</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .bg-dark-base { background-color: #0b111e; }
+    .bg-dark-card { background-color: #111a2e; }
+    .border-dark { border-color: #1e293b; }
+  </style>
+</head>
+<body class="bg-dark-base text-slate-100 flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-dark-card border-r border-dark p-6 flex flex-col justify-between hidden md:flex">
+    <div>
+      <div class="flex items-center gap-3 mb-8">
+        <div class="bg-blue-600 p-2 rounded-xl text-white shadow-lg shadow-blue-500/20">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight">PhishGuard</h1>
+          <p class="text-xs text-slate-400">AI-Powered Exploit Simulator</p>
+        </div>
+      </div>
+
+      <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Security Center</div>
+      <nav class="space-y-1">
+        <a href="#overview" class="flex items-center gap-3 px-4 py-3 bg-blue-600/10 text-blue-400 rounded-xl font-medium border border-blue-500/20">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Overview
+        </a>
+        <a href="#scanner" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-xl font-medium transition">
+          <i data-lucide="scan" class="w-4 h-4"></i> URL Scanner
+        </a>
+        <a href="#gmailScanner" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-xl font-medium transition">
+          <i data-lucide="mail" class="w-4 h-4"></i> Gmail Inspector
+        </a>
+        <a href="#history" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-xl font-medium transition">
+          <i data-lucide="history" class="w-4 h-4"></i> Scan History
+        </a>
+      </nav>
+    </div>
+
+    <div class="p-4 bg-slate-900/60 rounded-xl border border-dark space-y-2">
+      <div class="flex justify-between items-center text-xs">
+        <span class="text-slate-400">Exploit Simulator</span>
+        <span class="flex items-center gap-1 text-emerald-400 font-semibold"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Active</span>
+      </div>
+      <div class="flex justify-between items-center text-xs">
+        <span class="text-slate-400">AI Model</span>
+        <span class="text-emerald-400 font-semibold">Trained (RF-13)</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col overflow-y-auto">
+    <header class="h-16 bg-dark-card/50 backdrop-blur border-b border-dark px-8 flex items-center justify-between sticky top-0 z-10">
+      <div class="flex items-center gap-4">
+        <span class="text-sm font-semibold text-slate-300">URL Security Operations Center</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs">HN</div>
+        <div class="text-xs">
+          <div class="font-semibold text-slate-200">Security Analyst</div>
+          <div class="text-slate-400 font-medium">Tier-1 Incident Team by HexaNova</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="p-8 space-y-8 max-w-7xl mx-auto w-full">
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-white">Security Threat Dashboard</h2>
+        <p class="text-sm text-slate-400 mt-1">Real-time link classifier with predictive click impact & exploit execution modeling.</p>
+      </div>
+
+      <!-- Real-Time Metrics -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-5 bg-dark-card border border-dark rounded-2xl">
+          <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+            <span>Total URLs Scanned</span>
+            <i data-lucide="link" class="w-4 h-4 text-blue-400"></i>
+          </div>
+          <div class="text-2xl font-bold text-white mt-2" id="kpiTotal">0</div>
+          <div class="text-xs text-slate-500 mt-1">Active session</div>
+        </div>
+
+        <div class="p-5 bg-dark-card border border-dark rounded-2xl">
+          <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+            <span>Phishing Detected</span>
+            <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i>
+          </div>
+          <div class="text-2xl font-bold text-rose-400 mt-2" id="kpiPhishing">0</div>
+          <div class="text-xs text-rose-400/80 mt-1">Direct threats</div>
+        </div>
+
+        <div class="p-5 bg-dark-card border border-dark rounded-2xl">
+          <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+            <span>Suspicious Links</span>
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>
+          </div>
+          <div class="text-2xl font-bold text-amber-400 mt-2" id="kpiSuspicious">0</div>
+          <div class="text-xs text-amber-400/80 mt-1">Needs review</div>
+        </div>
+
+        <div class="p-5 bg-dark-card border border-dark rounded-2xl">
+          <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+            <span>Legitimate & Safe</span>
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div class="text-2xl font-bold text-emerald-400 mt-2" id="kpiSafe">0</div>
+          <div class="text-xs text-emerald-400/80 mt-1">Verified safe</div>
+        </div>
+      </div>
+
+      <!-- Single URL Input -->
+      <div class="p-6 bg-dark-card border border-dark rounded-2xl space-y-4 shadow-xl" id="scanner">
+        <div class="flex items-center gap-2 text-sm font-semibold text-blue-400">
+          <i data-lucide="radar" class="w-4 h-4"></i> Single URL Inspector
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <i data-lucide="globe" class="w-5 h-5 text-slate-500 absolute left-4 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="urlInput" placeholder="Paste link to simulate (e.g., https://net77.cc/verify2 or https://forms.gle/...)..." 
+                   class="w-full bg-dark-base border border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-blue-500 transition text-slate-100 placeholder-slate-500" />
+          </div>
+          <button id="scanBtn" class="px-8 py-3.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white text-sm font-semibold rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition disabled:opacity-50">
+            <i data-lucide="search" class="w-4 h-4"></i> Analyze URL
+          </button>
+        </div>
+      </div>
+
+      <!-- Exploit Simulation Card -->
+      <div id="simulationCard" class="hidden p-6 bg-dark-card border border-rose-500/30 rounded-2xl shadow-2xl space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="p-2.5 bg-rose-500/20 text-rose-400 rounded-xl border border-rose-500/30" id="simIconBox">
+              <i data-lucide="skull" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                What Happens If You Open This Link?
+              </h3>
+              <p class="text-xs text-slate-400">Step-by-step predictive attack flow simulation</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs uppercase text-slate-400 font-semibold block">Predicted Attack Pattern</span>
+            <span id="simAttackType" class="text-sm font-bold text-rose-400"></span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="simStepsContainer"></div>
+
+        <div class="p-4 bg-slate-900/90 rounded-xl border border-slate-800 flex flex-col md:flex-row justify-between gap-3 text-xs">
+          <div>
+            <span class="text-slate-400 font-semibold uppercase block">Threat Actor Objective:</span>
+            <span id="simGoal" class="text-slate-200 font-medium"></span>
+          </div>
+          <div>
+            <span class="text-slate-400 font-semibold uppercase block">Potential Blast Radius:</span>
+            <span id="simBlast" class="text-amber-400 font-semibold"></span>
+          </div>
+          <div>
+            <span class="text-slate-400 font-semibold uppercase block">SOC Recommendation:</span>
+            <span id="simAction" class="text-rose-400 font-bold"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Telemetry Table -->
+      <div class="p-6 bg-dark-card border border-dark rounded-2xl shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-dark pb-4">
+          <div>
+            <h3 id="resultVerdict" class="text-xl font-bold tracking-wide text-slate-300">Ready for Scan</h3>
+            <p id="riskScoreDisplay" class="text-xs text-slate-400 mt-0.5">Calculated Risk Score: --%</p>
+          </div>
+          <span class="text-xs text-slate-500 font-mono" id="scannedUrlText">No URL tested yet</span>
+        </div>
+
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="text-slate-400 border-b border-dark">
+                <th class="py-3 font-semibold w-1/2">Security Parameter</th>
+                <th class="py-3 font-semibold text-right w-1/2">Extracted Value</th>
+              </tr>
+            </thead>
+            <tbody id="telemetryTableBody" class="divide-y divide-slate-800/60 font-medium">
+              <tr><td class="py-3 text-slate-300">URL Length</td><td class="py-3 text-right text-slate-400" id="tel_len">--</td></tr>
+              <tr><td class="py-3 text-slate-300">Entropy (Randomness Score)</td><td class="py-3 text-right text-slate-400" id="tel_entropy">--</td></tr>
+              <tr><td class="py-3 text-slate-300">Domain Age</td><td class="py-3 text-right text-slate-400" id="tel_age">--</td></tr>
+              <tr><td class="py-3 text-slate-300">Uses URL Shortener</td><td class="py-3 text-right text-slate-400" id="tel_short">--</td></tr>
+              <tr><td class="py-3 text-slate-300">Has '@' Symbol</td><td class="py-3 text-right text-slate-400" id="tel_at">--</td></tr>
+              <tr><td class="py-3 text-slate-300">Subdomain Levels</td><td class="py-3 text-right text-slate-400" id="tel_sub">--</td></tr>
+              <tr><td class="py-3 text-slate-300">High-Risk TLD (.cc, .xyz)</td><td class="py-3 text-right text-slate-400" id="tel_tld">--</td></tr>
+              <tr><td class="py-3 text-slate-300">HTTPS Enabled</td><td class="py-3 text-right text-slate-400" id="tel_https">--</td></tr>
+              <tr><td class="py-3 text-slate-300">Phishing Keyword Hits</td><td class="py-3 text-right text-slate-400" id="tel_key">--</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Gmail Scanner Section -->
+      <div class="p-6 bg-dark-card border border-dark rounded-2xl space-y-4 shadow-xl" id="gmailScanner">
+        <div class="flex items-center gap-2 text-sm font-semibold text-rose-400">
+          <i data-lucide="mail-search" class="w-4 h-4"></i> Automated Gmail Inbox Scanner
+        </div>
+        <p class="text-xs text-slate-400">Scans recent incoming emails (past 25 threads) for fraudulent internship solicitations and deceptive links.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <input type="email" id="gmailEmail" placeholder="your_email@gmail.com" 
+                 class="bg-dark-base border border-slate-700 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rose-500 text-slate-100 placeholder-slate-500" />
+          <input type="password" id="gmailAppPassword" placeholder="16-digit Google App Password" 
+                 class="bg-dark-base border border-slate-700 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-rose-500 text-slate-100 placeholder-slate-500" />
+          <button id="gmailScanBtn" class="px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition disabled:opacity-50">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i> Scan Recent Emails (25)
+          </button>
+        </div>
+
+        <div id="emailResultsContainer" class="space-y-4 pt-2"></div>
+      </div>
+
+      <!-- Live Scan History Table -->
+      <div class="p-6 bg-dark-card border border-dark rounded-2xl shadow-xl" id="history">
+        <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
+          <div>
+            <h3 class="text-sm font-bold text-slate-200">Recent Actionable Scans</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Live feed of verified and intercepted URLs</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="deleteSelectedBtn" class="hidden px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete Selected (<span id="selectedCount">0</span>)
+            </button>
+            <button id="clearAllBtn" class="hidden px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg text-xs font-medium transition">
+              Clear All
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="text-slate-400 border-b border-dark pb-3">
+                <th class="pb-3 w-8">
+                  <input type="checkbox" id="selectAllCheckbox" class="rounded bg-dark-base border-slate-700 text-blue-600 focus:ring-0 cursor-pointer" />
+                </th>
+                <th class="pb-3 font-semibold">Timestamp</th>
+                <th class="pb-3 font-semibold">Target URL</th>
+                <th class="pb-3 font-semibold">Risk Score</th>
+                <th class="pb-3 font-semibold">Verdict</th>
+                <th class="pb-3 font-semibold text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody" class="divide-y divide-slate-800/60">
+              <tr id="emptyHistoryRow">
+                <td colspan="6" class="py-6 text-center text-slate-500">No scans conducted in this session yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+
+    let scanRecords = [];
+
+    const scanBtn = document.getElementById('scanBtn');
+    const urlInput = document.getElementById('urlInput');
+    const resultVerdict = document.getElementById('resultVerdict');
+    const riskScoreDisplay = document.getElementById('riskScoreDisplay');
+    const scannedUrlText = document.getElementById('scannedUrlText');
+    const historyTableBody = document.getElementById('historyTableBody');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+    const selectedCountSpan = document.getElementById('selectedCount');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+
+    // Simulation Elements
+    const simulationCard = document.getElementById('simulationCard');
+    const simAttackType = document.getElementById('simAttackType');
+    const simStepsContainer = document.getElementById('simStepsContainer');
+    const simGoal = document.getElementById('simGoal');
+    const simBlast = document.getElementById('simBlast');
+    const simAction = document.getElementById('simAction');
+    const simIconBox = document.getElementById('simIconBox');
+
+    function refreshMetrics() {
+      const total = scanRecords.length;
+      const phishing = scanRecords.filter(r => r.riskScore >= 70 || r.isPhishing).length;
+      const suspicious = scanRecords.filter(r => r.riskScore >= 40 && r.riskScore < 70 && !r.isPhishing).length;
+      const safe = scanRecords.filter(r => r.riskScore < 40 && !r.isPhishing).length;
+
+      document.getElementById('kpiTotal').innerText = total;
+      document.getElementById('kpiPhishing').innerText = phishing;
+      document.getElementById('kpiSuspicious').innerText = suspicious;
+      document.getElementById('kpiSafe').innerText = safe;
+    }
+
+    function renderHistoryTable() {
+      if (scanRecords.length === 0) {
+        historyTableBody.innerHTML = `
+          <tr id="emptyHistoryRow">
+            <td colspan="6" class="py-6 text-center text-slate-500">No scans conducted in this session yet.</td>
+          </tr>
+        `;
+        deleteSelectedBtn.classList.add('hidden');
+        clearAllBtn.classList.add('hidden');
+        selectAllCheckbox.checked = false;
+        return;
+      }
+
+      clearAllBtn.classList.remove('hidden');
+
+      let html = "";
+      scanRecords.forEach(item => {
+        const isThreat = item.isPhishing || item.riskScore >= 70;
+        html += `
+          <tr class="hover:bg-slate-800/30 transition" data-id="${item.id}">
+            <td class="py-3">
+              <input type="checkbox" class="row-checkbox rounded bg-dark-base border-slate-700 text-blue-600 focus:ring-0 cursor-pointer" data-id="${item.id}" />
+            </td>
+            <td class="py-3 text-slate-500">${item.time}</td>
+            <td class="py-3 font-mono text-slate-300 truncate max-w-xs">${item.url}</td>
+            <td class="py-3 font-semibold ${isThreat ? 'text-rose-400' : 'text-emerald-400'}">${item.riskScore}%</td>
+            <td class="py-3">
+              <span class="px-2 py-0.5 rounded font-medium ${isThreat ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">
+                ${item.verdict.split(' ')[0]}
+              </span>
+            </td>
+            <td class="py-3 text-right">
+              <button onclick="deleteSingleScan('${item.id}')" class="text-slate-500 hover:text-rose-400 transition p-1">
+                <i data-lucide="trash" class="w-3.5 h-3.5 inline"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      historyTableBody.innerHTML = html;
+      lucide.createIcons();
+      updateSelectionState();
+    }
+
+    function logScanRecord(url, riskScore, isPhishing, verdict) {
+      scanRecords.unshift({
+        id: 'scan_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        url: url,
+        riskScore: riskScore,
+        isPhishing: isPhishing,
+        verdict: verdict,
+        time: new Date().toTimeString().split(' ')[0]
+      });
+      refreshMetrics();
+      renderHistoryTable();
+    }
+
+    window.deleteSingleScan = function(id) {
+      scanRecords = scanRecords.filter(r => r.id !== id);
+      refreshMetrics();
+      renderHistoryTable();
+    };
+
+    function updateSelectionState() {
+      const checkboxes = document.querySelectorAll('.row-checkbox');
+      const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
+      const count = checkedBoxes.length;
+
+      selectedCountSpan.innerText = count;
+      if (count > 0) {
+        deleteSelectedBtn.classList.remove('hidden');
+      } else {
+        deleteSelectedBtn.classList.add('hidden');
+      }
+      selectAllCheckbox.checked = checkboxes.length > 0 && count === checkboxes.length;
+    }
+
+    selectAllCheckbox.addEventListener('change', (e) => {
+      document.querySelectorAll('.row-checkbox').forEach(cb => { cb.checked = e.target.checked; });
+      updateSelectionState();
+    });
+
+    historyTableBody.addEventListener('change', (e) => {
+      if (e.target.classList.contains('row-checkbox')) updateSelectionState();
+    });
+
+    deleteSelectedBtn.addEventListener('click', () => {
+      const idsToDelete = new Set(Array.from(document.querySelectorAll('.row-checkbox:checked')).map(cb => cb.dataset.id));
+      scanRecords = scanRecords.filter(r => !idsToDelete.has(r.id));
+      refreshMetrics();
+      renderHistoryTable();
+    });
+
+    clearAllBtn.addEventListener('click', () => {
+      if (confirm("Clear all scan history?")) {
+        scanRecords = [];
+        refreshMetrics();
+        renderHistoryTable();
+      }
+    });
+
+    // Single URL Scan
+    scanBtn.addEventListener('click', async () => {
+      const url = urlInput.value.trim();
+      if (!url) {
+        alert("Please enter a valid URL!");
+        return;
+      }
+
+      scanBtn.disabled = true;
+      scanBtn.innerHTML = `<span class="animate-spin">⏳</span> Simulating Impact...`;
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/scan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: url })
+        });
+
+        if (!response.ok) throw new Error("API Connection Error");
+        const data = await response.json();
+
+        resultVerdict.innerText = data.verdict;
+        resultVerdict.className = `text-xl font-bold tracking-wide ${data.is_phishing ? 'text-rose-500' : 'text-emerald-400'}`;
+        riskScoreDisplay.innerText = `Calculated Risk Score: ${data.risk_score}%`;
+        scannedUrlText.innerText = data.url;
+
+        if (data.telemetry) {
+          document.getElementById('tel_len').innerText = data.telemetry["URL Length"] || "--";
+          document.getElementById('tel_entropy').innerText = data.telemetry["Entropy (Randomness Score)"] || "--";
+          document.getElementById('tel_age').innerText = data.telemetry["Domain Age"] || "--";
+          document.getElementById('tel_short').innerText = data.telemetry["Uses URL Shortener"] || "--";
+          document.getElementById('tel_at').innerText = data.telemetry["Has '@' Symbol"] || "--";
+          document.getElementById('tel_sub').innerText = data.telemetry["Subdomain Levels"] || "--";
+          document.getElementById('tel_tld').innerText = data.telemetry["High-Risk TLD (e.g. .cc, .xyz)"] || "--";
+          document.getElementById('tel_https').innerText = data.telemetry["HTTPS Enabled"] || "--";
+          document.getElementById('tel_key').innerText = data.telemetry["Phishing Keyword Hits"] || "--";
+        }
+
+        if (data.consequences) {
+          simulationCard.classList.remove('hidden');
+          simAttackType.innerText = data.consequences.attack_type;
+          simAttackType.className = `text-sm font-bold ${data.is_phishing ? 'text-rose-400' : 'text-emerald-400'}`;
+          simGoal.innerText = data.consequences.threat_actor_goal;
+          simBlast.innerText = data.consequences.blast_radius;
+          simAction.innerText = data.consequences.safety_recommendation;
+
+          if (data.is_phishing) {
+            simIconBox.className = "p-2.5 bg-rose-500/20 text-rose-400 rounded-xl border border-rose-500/30";
+            simIconBox.innerHTML = `<i data-lucide="skull" class="w-5 h-5"></i>`;
+          } else {
+            simIconBox.className = "p-2.5 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/30";
+            simIconBox.innerHTML = `<i data-lucide="shield-check" class="w-5 h-5"></i>`;
+          }
+
+          simStepsContainer.innerHTML = data.consequences.simulated_steps.map((step) => `
+            <div class="p-4 bg-slate-900/80 border ${data.is_phishing ? 'border-rose-500/20' : 'border-emerald-500/20'} rounded-xl space-y-1">
+              <span class="text-[11px] font-bold ${data.is_phishing ? 'text-rose-400' : 'text-emerald-400'} uppercase block">${step.phase}</span>
+              <p class="text-xs text-slate-300">${step.detail}</p>
+            </div>
+          `).join('');
+        }
+
+        logScanRecord(data.url, data.risk_score, data.is_phishing, data.verdict);
+
+      } catch (err) {
+        console.error(err);
+        alert("Connection failed! Ensure Uvicorn is running on port 8000.");
+      } finally {
+        scanBtn.disabled = false;
+        scanBtn.innerHTML = `<i data-lucide="search" class="w-4 h-4"></i> Analyze URL`;
+        lucide.createIcons();
+      }
+    });
+
+    // Gmail Inbox Scanner (25 Emails Fetch)
+    const gmailScanBtn = document.getElementById('gmailScanBtn');
+    const gmailEmail = document.getElementById('gmailEmail');
+    const gmailAppPassword = document.getElementById('gmailAppPassword');
+    const emailResultsContainer = document.getElementById('emailResultsContainer');
+
+    gmailScanBtn.addEventListener('click', async () => {
+      const emailVal = gmailEmail.value.trim();
+      const passVal = gmailAppPassword.value.trim();
+
+      if (!emailVal || !passVal) {
+        alert("Please enter both your Gmail address and 16-character Google App Password.");
+        return;
+      }
+
+      gmailScanBtn.disabled = true;
+      gmailScanBtn.innerHTML = `<span class="animate-spin">⏳</span> Scanning 25 Recent Emails...`;
+      emailResultsContainer.innerHTML = `<div class="text-xs text-slate-400 py-3">Connecting to IMAP and extracting email payloads...</div>`;
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/scan-inbox", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email_user: emailVal, app_password: passVal, max_emails: 25 })
+        });
+
+        const res = await response.json();
+        if (res.status === "error") throw new Error(res.message);
+
+        emailResultsContainer.innerHTML = "";
+        if (res.emails.length === 0) {
+          emailResultsContainer.innerHTML = `<div class="text-xs text-slate-500 py-2">No recent emails found in Inbox.</div>`;
+          return;
+        }
+
+        res.emails.forEach(item => {
+          const threatBadge = item.has_threat
+            ? `<span class="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-bold flex items-center gap-1"><i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i> PHISHING DETECTED</span>`
+            : `<span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> CLEAN</span>`;
+
+          const gmailActionBtn = item.has_threat
+            ? `<a href="${item.gmail_url}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-rose-600/30 transition">
+                 <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Inspect Phishy Email
+               </a>`
+            : `<a href="${item.gmail_url}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium flex items-center gap-1.5 transition">
+                 <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open in Gmail
+               </a>`;
+
+          let linksHtml = "";
+          item.links.forEach(l => {
+            logScanRecord(l.url, l.risk_score, l.is_phishing, l.is_phishing ? "PHISHING / MALICIOUS" : "LEGITIMATE");
+            linksHtml += `
+              <div class="flex justify-between items-center text-xs py-1.5 border-b border-slate-800/80">
+                <span class="font-mono text-slate-400 truncate max-w-md">${l.url}</span>
+                <span class="${l.is_phishing ? 'text-rose-400 font-bold' : 'text-emerald-400'}">${l.risk_score}% Risk</span>
+              </div>
+            `;
+          });
+
+          if (item.links.length === 0) {
+            linksHtml = `<div class="text-[11px] text-slate-500 italic py-1">No external links found in email body.</div>`;
+          }
+
+          emailResultsContainer.innerHTML += `
+            <div class="p-5 bg-dark-base rounded-2xl border ${item.has_threat ? 'border-rose-500/40' : 'border-slate-800'} space-y-3">
+              <div class="flex flex-wrap justify-between items-start gap-3">
+                <div class="space-y-1">
+                  <h4 class="text-sm font-bold text-slate-200">${item.subject}</h4>
+                  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
+                    <div><span class="text-slate-500 font-medium">From:</span> <span class="text-slate-300 font-mono">${item.from}</span></div>
+                    <div><span class="text-slate-500 font-medium">Date:</span> <span class="text-slate-400">${item.date}</span></div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  ${threatBadge}
+                  ${gmailActionBtn}
+                </div>
+              </div>
+              <div class="pt-2 border-t border-slate-800/60">
+                <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Extracted Email Hyperlinks:</div>
+                ${linksHtml}
+              </div>
+            </div>
+          `;
+        });
+
+        lucide.createIcons();
+
+      } catch (err) {
+        console.error(err);
+        emailResultsContainer.innerHTML = `<div class="text-xs text-rose-400 py-2">Authentication or Connection Failed: ${err.message}</div>`;
+      } finally {
+        gmailScanBtn.disabled = false;
+        gmailScanBtn.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4"></i> Scan Recent Emails (25)`;
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>
